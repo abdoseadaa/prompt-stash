@@ -327,13 +327,25 @@ window.addEventListener("message", (event: MessageEvent<WebviewMessage>) => {
  * than navigating the webview to it, which would replace the panel.
  */
 function claimFileDrags(): void {
-  const claim = (event: DragEvent): void => {
+  // Claimed unconditionally and in the capture phase. VS Code registers its
+  // check on this same window in the bubble phase, so capture here is strictly
+  // earlier, and not inspecting dataTransfer.types avoids depending on it being
+  // populated during dragenter — which varies by platform.
+  //
+  // Preventing dragenter's default does not by itself permit a drop; dragover
+  // governs that. Text drags therefore still behave normally in the editor.
+  const claimEnter = (event: DragEvent): void => {
+    event.preventDefault();
+  };
+  window.addEventListener("dragenter", claimEnter, true);
+  document.addEventListener("dragenter", claimEnter, true);
+
+  const swallowFiles = (event: DragEvent): void => {
     if (!Array.from(event.dataTransfer?.types ?? []).includes("Files")) return;
     event.preventDefault();
   };
-  document.addEventListener("dragenter", claim);
-  document.addEventListener("dragover", claim);
-  document.addEventListener("drop", claim);
+  document.addEventListener("dragover", swallowFiles);
+  document.addEventListener("drop", swallowFiles);
 }
 
 claimFileDrags();

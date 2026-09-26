@@ -85,7 +85,10 @@ function buildEditor(stash: Stash, callbacks: StashCardCallbacks): HTMLTextAreaE
 /** True when a drag is carrying files rather than, say, selected text. */
 function carriesFiles(event: DragEvent): boolean {
   const types = Array.from(event.dataTransfer?.types ?? []);
-  return types.includes("Files") || types.includes("text/uri-list");
+  if (types.includes("Files") || types.includes("text/uri-list")) return true;
+  // Some platforms expose nothing useful until the drop itself. An unlabelled
+  // drag is treated as files, since a text drag always announces text/plain.
+  return types.length === 0;
 }
 
 /**
