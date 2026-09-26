@@ -1,0 +1,138 @@
+{
+  "name": "prompt-stash",
+  "displayName": "Prompt Stash",
+  "description": "Park an in-progress AI prompt — text plus screenshots and files — then copy it back into any chat box with one click.",
+  "version": "1.0.0",
+  "publisher": "abdelrahmanseada",
+  "author": {
+    "name": "Abdelrahman Seada",
+    "url": "https://x.com/abdoseadaa"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abdoseadaa/prompt-stash.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abdoseadaa/prompt-stash/issues"
+  },
+  "homepage": "https://github.com/abdoseadaa/prompt-stash#readme",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "prompt",
+    "draft",
+    "clipboard",
+    "claude",
+    "cursor"
+  ],
+  "icon": "icons/icon128.png",
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "promptStash.openPanel",
+        "title": "Open Prompt Stash",
+        "category": "Prompt Stash"
+      },
+      {
+        "command": "promptStash.stashFromClipboard",
+        "title": "Stash Clipboard Text",
+        "category": "Prompt Stash"
+      },
+      {
+        "command": "promptStash.copyLatest",
+        "title": "Copy Latest Stash",
+        "category": "Prompt Stash"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "promptStash.openPanel",
+        "key": "ctrl+shift+alt+p",
+        "mac": "cmd+shift+alt+p"
+      },
+      {
+        "command": "promptStash.stashFromClipboard",
+        "key": "ctrl+alt+s",
+        "mac": "cmd+alt+s"
+      }
+    ],
+    "views": {
+      "prompt-stash-panel": [
+        {
+          "type": "webview",
+          "id": "promptStash.panel",
+          "name": "Prompt Stash"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "prompt-stash-panel",
+          "title": "Prompt Stash",
+          "icon": "icons/prompt-stash.svg"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Prompt Stash",
+      "properties": {
+        "promptStash.storePath": {
+          "type": "string",
+          "default": "~/.prompt-stash",
+          "markdownDescription": "Folder holding `stashes.json` and the `media/` directory. Kept outside the editor's own storage on purpose, so VS Code and Cursor share one set of stashes."
+        },
+        "promptStash.attachmentFormat": {
+          "type": "string",
+          "enum": [
+            "paths",
+            "markdown",
+            "at-mentions"
+          ],
+          "enumDescriptions": [
+            "Plain absolute paths under an \"Attached files:\" heading — best for Claude Code and the CLI.",
+            "Markdown image links, e.g. ![shot-1](/abs/path.png).",
+            "@-prefixed paths, e.g. @/abs/path.png — best for Cursor."
+          ],
+          "default": "paths",
+          "description": "How attachment paths are written into the copied text."
+        },
+        "promptStash.maxAttachmentMb": {
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Largest single attachment accepted, in megabytes."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "npm run clean && npm run compile && npm run typecheck:webview && npm run bundle-webview",
+    "compile": "tsc -p ./",
+    "typecheck:webview": "tsc -p webview/tsconfig.json",
+    "bundle-webview": "esbuild webview/main.ts --bundle --outfile=webview/main.js --format=iife --target=es2020 --external:vscode",
+    "watch": "tsc -watch -p ./",
+    "watch:webview": "esbuild webview/main.ts --bundle --outfile=webview/main.js --format=iife --target=es2020 --external:vscode --watch",
+    "package": "npm run build && node scripts/package-vsix.js",
+    "install:cursor": "node scripts/install.js cursor",
+    "install:vscode": "node scripts/install.js code",
+    "icons": "node scripts/make-icons.js",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.0"
+  }
+}

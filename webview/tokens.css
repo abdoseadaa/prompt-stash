@@ -1,0 +1,81 @@
+/* ═══════════════════════════════════════════════════════════════
+   Prompt Stash design tokens
+
+   Same two-layer split as Jisr:
+
+   1. ACCENT + STATUS — fixed hex, so "copied" reads as copied in
+      Dark+, Light+ or any other theme.
+
+   2. SURFACES + TEXT — derived from the active VS Code theme with
+      color-mix(), so the panel looks native rather than pasted in.
+      color-mix lightens against a dark foreground and darkens
+      against a light one, giving real elevation both ways. Each
+      such token declares a flat fallback first; browsers without
+      color-mix keep that one.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Accent (fixed) — amber, to read as "parked / on hold" ──── */
+  --pstash-accent: #f59e0b;
+  --pstash-accent-hover: #fbbf24;
+  --pstash-accent-press: #d97706;
+  --pstash-accent-fg: #1a1205;
+  --pstash-accent-soft: rgba(245, 158, 11, 0.14);
+  --pstash-accent-ring: rgba(245, 158, 11, 0.45);
+
+  /* ── Status (fixed) ────────────────────────────────────────── */
+  --pstash-ok: #22c55e;
+  --pstash-ok-soft: rgba(34, 197, 94, 0.14);
+  --pstash-fail: #ef4444;
+  --pstash-fail-soft: rgba(239, 68, 68, 0.14);
+  --pstash-muted: #8b949e;
+
+  /* ── Surfaces (theme-derived) ──────────────────────────────── */
+  --pstash-bg: var(--vscode-sideBar-background, #1e1e1e);
+
+  --pstash-surface: var(--vscode-sideBar-background, #252526);
+  --pstash-surface: color-mix(in srgb, var(--vscode-sideBar-background) 94%, var(--vscode-foreground));
+
+  --pstash-surface-hover: var(--vscode-list-hoverBackground, #2a2d2e);
+  --pstash-surface-hover: color-mix(in srgb, var(--vscode-sideBar-background) 88%, var(--vscode-foreground));
+
+  --pstash-border: var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
+  --pstash-border: color-mix(in srgb, var(--vscode-sideBar-background) 78%, var(--vscode-foreground));
+
+  --pstash-input-bg: var(--vscode-input-background, #3c3c3c);
+  --pstash-input-fg: var(--vscode-input-foreground, #cccccc);
+
+  /* ── Text ──────────────────────────────────────────────────── */
+  --pstash-fg: var(--vscode-foreground, #cccccc);
+
+  --pstash-fg-dim: var(--vscode-descriptionForeground, #9d9d9d);
+  --pstash-fg-dim: color-mix(in srgb, var(--vscode-foreground) 66%, var(--vscode-sideBar-background));
+
+  --pstash-fg-faint: var(--vscode-disabledForeground, #7a7a7a);
+  --pstash-fg-faint: color-mix(in srgb, var(--vscode-foreground) 44%, var(--vscode-sideBar-background));
+
+  /* ── Geometry ──────────────────────────────────────────────── */
+  --pstash-radius: 6px;
+  --pstash-radius-sm: 4px;
+  --pstash-gap: 8px;
+  --pstash-pad: 10px;
+
+  /* ── Type ──────────────────────────────────────────────────── */
+  --pstash-font: var(--vscode-font-family, system-ui, sans-serif);
+  --pstash-mono: var(--vscode-editor-font-family, ui-monospace, monospace);
+  --pstash-fs: 12px;
+  --pstash-fs-sm: 11px;
+  --pstash-fs-lg: 13px;
+
+  /* ── Motion ────────────────────────────────────────────────── */
+  --pstash-t-fast: 90ms;
+  --pstash-t: 160ms;
+  --pstash-ease: cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --pstash-t-fast: 0ms;
+    --pstash-t: 0ms;
+  }
+}

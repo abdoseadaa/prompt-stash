@@ -1,0 +1,16 @@
+src/**
+scripts/**
+webview/**/*.ts
+!webview/main.js
+!webview/styles.css
+!webview/tokens.css
+!webview/index.html
+tsconfig.json
+webview/tsconfig.json
+.eslintrc*
+.vscode/**
+**/*.map
+**/.DS_Store
+.gitignore
+CONTRIBUTING.md
+images/**
