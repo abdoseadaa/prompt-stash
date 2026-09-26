@@ -79,35 +79,68 @@ function buildEditor(stash: Stash, callbacks: StashCardCallbacks): HTMLTextAreaE
     })();
   });
 
-  const setDropping = (on: boolean): void => {
-    textarea.classList.toggle("is-dropping", on);
+  return textarea;
+}
+
+/** True when a drag is carrying files rather than, say, selected text. */
+function carriesFiles(event: DragEvent): boolean {
+  const types = Array.from(event.dataTransfer?.types ?? []);
+  return types.includes("Files") || types.includes("text/uri-list");
+}
+
+/**
+ * Makes the whole open card a drop target, rather than only the text box.
+ *
+ * Only file drags are intercepted, so dragging selected text into the editor
+ * still behaves the way a textarea normally does.
+ */
+function attachDropZone(zone: HTMLElement, stash: Stash, callbacks: StashCardCallbacks): void {
+  // dragenter and dragleave fire again for every child element the pointer
+  // crosses, so the overlay is driven by a depth count instead of raw events —
+  // otherwise it flickers as you move across the textarea and thumbnails.
+  let depth = 0;
+  const show = (on: boolean): void => {
+    zone.classList.toggle("is-dropping", on);
   };
 
-  textarea.addEventListener("dragover", (e: DragEvent) => {
-    if (!e.dataTransfer) return;
+  zone.addEventListener("dragenter", (e: DragEvent) => {
+    if (!carriesFiles(e)) return;
     e.preventDefault();
-    setDropping(true);
+    depth += 1;
+    show(true);
   });
-  textarea.addEventListener("dragleave", () => setDropping(false));
-  textarea.addEventListener("drop", (e: DragEvent) => {
-    setDropping(false);
+
+  zone.addEventListener("dragover", (e: DragEvent) => {
+    if (!carriesFiles(e)) return;
+    // Without this the drop event never fires at all.
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+  });
+
+  zone.addEventListener("dragleave", (e: DragEvent) => {
+    if (!carriesFiles(e)) return;
+    depth = Math.max(0, depth - 1);
+    if (depth === 0) show(false);
+  });
+
+  zone.addEventListener("drop", (e: DragEvent) => {
+    depth = 0;
+    show(false);
+    if (!carriesFiles(e)) return;
+    e.preventDefault();
+
     // A drag out of the VS Code explorer carries only a uri-list, so the host
     // reads those off disk instead of copying bytes through postMessage.
     const uris = urisFromDataTransfer(e.dataTransfer);
     if (uris.length > 0) {
-      e.preventDefault();
       callbacks.onAttachUris(stash.id, uris);
       return;
     }
     void (async () => {
       const files = await filesFromDataTransfer(e.dataTransfer);
-      if (files.length === 0) return;
-      e.preventDefault();
-      callbacks.onAttachFiles(stash.id, files);
+      if (files.length > 0) callbacks.onAttachFiles(stash.id, files);
     })();
   });
-
-  return textarea;
 }
 
 export function renderStashCard(
@@ -158,8 +191,14 @@ export function renderStashCard(
     })
   );
 
+  // pointer-events:none in CSS — the overlay must never become the drop target
+  // itself, or it would swallow the event it exists to advertise.
+  const dropOverlay = h("div", "pstash-drop-overlay");
+  mount(dropOverlay, icon(Icons.paperclip), h("span", undefined, "Drop to attach"));
+
   mount(
     body,
+    dropOverlay,
     buildEditor(stash, callbacks),
     renderAttachmentStrip(stash, mediaUris, {
       onPreview: (a) => callbacks.onPreviewAttachment(stash.id, a),
@@ -171,6 +210,7 @@ export function renderStashCard(
     picker
   );
 
+  attachDropZone(body, stash, callbacks);
   card.appendChild(body);
   return card;
 }

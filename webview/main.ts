@@ -305,5 +305,21 @@ window.addEventListener("message", (event: MessageEvent<WebviewMessage>) => {
   handlers[message.type]?.();
 });
 
+/**
+ * A file dropped anywhere other than an open stash would otherwise make the
+ * webview navigate to it, replacing the panel with the file's contents. These
+ * run after the card's own handlers, which have already claimed the drops that
+ * matter.
+ */
+function blockStrayFileDrops(): void {
+  const swallow = (event: DragEvent): void => {
+    if (!Array.from(event.dataTransfer?.types ?? []).includes("Files")) return;
+    event.preventDefault();
+  };
+  document.addEventListener("dragover", swallow);
+  document.addEventListener("drop", swallow);
+}
+
+blockStrayFileDrops();
 listEl.replaceChildren(Skeleton(3));
 post("LOAD_STASHES");

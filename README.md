@@ -44,7 +44,7 @@ Every stash is a card, newest first, titled by its own first line. Text **saves 
 
 ### 🖼️ Screenshots that stay put
 
-Paste an image straight into a draft, drag files onto it, or pick them with 📎. They live with the draft instead of evaporating when you clear the chat box.
+Paste an image straight into a draft, **drag any file onto the card** — a screenshot, a JSON dump, a log — or pick them with 📎. The whole card is a drop target, so you don't have to aim. They live with the draft instead of evaporating when you clear the chat box.
 
 ### 🔍 A real look at what you attached
 
@@ -70,7 +70,8 @@ Click the 🔖 in the activity bar, or hit <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd
 |:---|:---|
 | 🆕 Start a draft | **New**, top right of the panel |
 | 🆘 Rescue a prompt I already typed | Select it, <kbd>Ctrl</kbd>+<kbd>C</kbd>, then <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> — stashed without opening a thing |
-| 🖼️ Attach a screenshot | Paste it into the draft, or drop a file on it |
+| 🖼️ Attach a screenshot | Paste it straight into the draft |
+| 📥 Attach any file | Drag it onto the open card from your file manager or the editor's explorer |
 | 🔍 Inspect an attachment | Hover its thumbnail and click |
 | 📋 Use the draft | **Copy**, then paste into any chat box |
 | 📂 Find the files on disk | The 📁 icon in the header |

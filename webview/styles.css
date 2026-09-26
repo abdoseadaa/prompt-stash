@@ -176,11 +176,36 @@ body {
 }
 
 .pstash-card-body {
+  position: relative;
   padding: 0 var(--pstash-pad) var(--pstash-pad);
   display: flex;
   flex-direction: column;
   gap: var(--pstash-gap);
 }
+
+/* ── Drop target ─────────────────────────────────────────────── */
+
+.pstash-drop-overlay {
+  position: absolute;
+  inset: 0 0 var(--pstash-gap);
+  z-index: 3;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 2px dashed var(--pstash-accent);
+  border-radius: var(--pstash-radius-sm);
+  background: var(--pstash-accent-soft);
+  color: var(--pstash-accent);
+  font-size: var(--pstash-fs);
+  font-weight: 600;
+  /* Must not become the drop target, or it swallows the event it advertises. */
+  pointer-events: none;
+}
+
+.pstash-drop-overlay svg { width: 15px; height: 15px; }
+
+.pstash-card-body.is-dropping .pstash-drop-overlay { display: flex; }
 
 /* ── Editor ──────────────────────────────────────────────────── */
 
@@ -201,11 +226,6 @@ body {
 .pstash-textarea:focus {
   outline: none;
   border-color: var(--pstash-accent);
-}
-
-.pstash-textarea.is-dropping {
-  border-color: var(--pstash-accent);
-  background: var(--pstash-accent-soft);
 }
 
 .pstash-hint {
