@@ -64,7 +64,7 @@ function buildHead(stash: Stash, isOpen: boolean, callbacks: StashCardCallbacks)
 function buildEditor(stash: Stash, callbacks: StashCardCallbacks): HTMLTextAreaElement {
   const textarea = h("textarea", "pstash-textarea") as HTMLTextAreaElement;
   textarea.value = stash.text;
-  textarea.placeholder = "Park the prompt here. Paste screenshots straight in, or drop files.";
+  textarea.placeholder = "Park the prompt here. Paste screenshots straight in.";
   textarea.spellcheck = false;
 
   textarea.addEventListener("input", () => callbacks.onTextChange(stash.id, textarea.value));
@@ -95,6 +95,16 @@ function carriesFiles(event: DragEvent): boolean {
 /**
  * Makes the whole open card a drop target, rather than only the text box.
  *
+ * DORMANT on current VS Code and Cursor builds. The workbench claims OS file
+ * drags before they reach a side-panel webview at all — verified from the
+ * panel's own log, which records activation and startup but never a single
+ * dragenter, no matter where the file is dragged. preventDefault on dragenter
+ * is the documented escape hatch (pre/index.html, handleInnerDragStartEvent)
+ * and is installed in main.ts, but it cannot fire for an event that never
+ * arrives. Reaching the file would mean letting the workbench take the drop and
+ * picking it up from the extension host instead.
+ *
+ * Kept wired because it costs nothing and works the moment the event arrives.
  * Only file drags are intercepted, so dragging selected text into the editor
  * still behaves the way a textarea normally does.
  */

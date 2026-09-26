@@ -72,6 +72,21 @@ character rules and reserved device names everywhere, so a store written on one 
 opens on another, and it preserves non-ASCII names rather than flattening them. npm
 scripts must be Node, not shell: `rm -rf` and `bash` do not exist on Windows.
 
+**File drag-and-drop does not reach the panel.** The workbench claims OS file
+drags before a side-panel webview sees them: the panel's Output channel logs
+activation and webview startup but never a `dragenter`, wherever the file is
+dragged. `preventDefault` on `dragenter` is VS Code's documented escape hatch
+(`pre/index.html`, `handleInnerDragStartEvent`) and is installed on `window` and
+`document` in the capture phase, but it cannot fire for an event that never
+arrives. The drop code in `stash-card.view.ts` is left wired and dormant.
+Reaching the file would mean letting the workbench take the drop and picking it
+up host-side instead — a different mechanism, not a better claim.
+
+**Debug via the Output channel, not the webview console.** `Help > Toggle
+Developer Tools` attaches to the workbench document, where the panel's listeners
+do not exist and drag readings are meaningless. `Prompt Stash` in the Output
+panel needs no frame selection.
+
 **Icons are generated from code** (`npm run icons`) because this machine has no SVG
 rasterizer. Edit `scripts/make-icons.js`, not the PNGs.
 

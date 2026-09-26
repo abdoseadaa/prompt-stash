@@ -44,7 +44,7 @@ Every stash is a card, newest first, titled by its own first line. Text **saves 
 
 ### 🖼️ Screenshots that stay put
 
-Paste an image straight into a draft, **drag any file onto the card** — a screenshot, a JSON dump, a log — or pick them with 📎. The whole card is a drop target, so you don't have to aim. They live with the draft instead of evaporating when you clear the chat box.
+Paste an image straight into a draft, or attach anything — a screenshot, a JSON dump, a log — with 📎. They live with the draft instead of evaporating when you clear the chat box.
 
 ### 🔍 A real look at what you attached
 
@@ -71,7 +71,7 @@ Click the 🔖 in the activity bar, or hit <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd
 | 🆕 Start a draft | **New**, top right of the panel |
 | 🆘 Rescue a prompt I already typed | Select it, <kbd>Ctrl</kbd>+<kbd>C</kbd>, then <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> — stashed without opening a thing |
 | 🖼️ Attach a screenshot | Paste it straight into the draft |
-| 📥 Attach any file | Drag it from your file manager onto the open card |
+| 📥 Attach any file | The 📎 button on the open card |
 | 🔍 Inspect an attachment | Hover its thumbnail and click |
 | 📋 Use the draft | **Copy**, then paste into any chat box |
 | 📂 Find the files on disk | The 📁 icon in the header |
@@ -145,7 +145,7 @@ Non-PNG images convert automatically, and if the system refuses the write, the f
 - 🗑️ **Deleting a stash deletes its attachments**, so the folder never fills with files nothing points at.
 - 🔁 **Changing `storePath` needs a window reload** before attachments display again.
 - 📐 **Text and images can't share one paste** — a clipboard limitation, explained above.
-- 🖱️ **Drag files in from your file manager**, not from the editor's own explorer — VS Code claims drags that start inside its own window before any panel can see them.
+- 🖱️ **Dragging files onto the panel doesn't work yet.** VS Code hands file drags to the workbench before a side-panel extension can see them, so nothing reaches the card. Paste a screenshot or use 📎 instead.
 
 ## 🔒 Privacy
 
