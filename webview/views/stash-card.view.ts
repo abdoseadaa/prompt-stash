@@ -4,6 +4,7 @@ import { Button, IconButton } from "../components/button";
 import { Icons } from "../icons";
 import { renderAttachmentStrip } from "./attachment-strip.view";
 import { filesFromDataTransfer, urisFromDataTransfer, type IngestedFile } from "../clipboard.bridge";
+import { logToHost } from "../host";
 
 export interface StashCardCallbacks {
   onTextChange(stashId: string, text: string): void;
@@ -111,6 +112,7 @@ function attachDropZone(zone: HTMLElement, stash: Stash, callbacks: StashCardCal
     e.preventDefault();
     depth += 1;
     show(true);
+    if (depth === 1) logToHost("card dragenter — overlay shown");
   });
 
   zone.addEventListener("dragover", (e: DragEvent) => {
@@ -129,6 +131,7 @@ function attachDropZone(zone: HTMLElement, stash: Stash, callbacks: StashCardCal
   zone.addEventListener("drop", (e: DragEvent) => {
     depth = 0;
     show(false);
+    logToHost(`card drop — carriesFiles=${carriesFiles(e)}`);
     if (!carriesFiles(e)) return;
     e.preventDefault();
 

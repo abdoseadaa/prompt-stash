@@ -9,9 +9,7 @@ import { openLightbox } from "./views/lightbox.view";
 import { Skeleton } from "./components/primitives";
 import { copyImageToClipboard, type IngestedFile } from "./clipboard.bridge";
 import type { StashCardCallbacks } from "./views/stash-card.view";
-
-declare function acquireVsCodeApi(): { postMessage(msg: unknown): void };
-const vscode = acquireVsCodeApi();
+import { logToHost, post } from "./host";
 
 const SAVE_DEBOUNCE_MS = 400;
 const EXPAND_MS = 180;
@@ -32,9 +30,7 @@ let pendingSaveId: string | null = null;
 let animating = false;
 let renderQueued = false;
 
-function post(type: string, payload?: unknown): void {
-  vscode.postMessage({ type, payload });
-}
+
 
 function findStash(stashId: string): Stash | undefined {
   return stashes.find((s) => s.id === stashId);
@@ -334,8 +330,19 @@ function claimFileDrags(): void {
   //
   // Preventing dragenter's default does not by itself permit a drop; dragover
   // governs that. Text drags therefore still behave normally in the editor.
+  // Throttled: a single drag produces a continuous stream of these.
+  let lastReport = 0;
+  const report = (label: string, event: DragEvent): void => {
+    const now = Date.now();
+    if (now - lastReport < 400) return;
+    lastReport = now;
+    const types = Array.from(event.dataTransfer?.types ?? []).join(",") || "none";
+    logToHost(`${label}  types=[${types}]  claimed=${event.defaultPrevented}`);
+  };
+
   const claimEnter = (event: DragEvent): void => {
     event.preventDefault();
+    report("panel dragenter", event);
   };
   window.addEventListener("dragenter", claimEnter, true);
   document.addEventListener("dragenter", claimEnter, true);
@@ -345,15 +352,21 @@ function claimFileDrags(): void {
     event.preventDefault();
   };
   document.addEventListener("dragover", swallowFiles);
-  document.addEventListener("drop", swallowFiles);
+  document.addEventListener("drop", (event: DragEvent) => {
+    swallowFiles(event);
+    const types = Array.from(event.dataTransfer?.types ?? []).join(",") || "none";
+    const files = event.dataTransfer?.files?.length ?? 0;
+    const onCard = (event.target as HTMLElement | null)?.closest?.(".pstash-card-body") ? "yes" : "no";
+    logToHost(`panel drop  types=[${types}]  files=${files}  overCard=${onCard}`);
+  });
 }
 
 claimFileDrags();
 
 // Printed so "which build is this window actually running, and did the drag
 // claim install?" is answerable at a glance in the webview's own console.
-console.log(
-  `[prompt-stash] v${(window as unknown as { __promptStashVersion?: string }).__promptStashVersion ?? "?"} ready — file drags claimed`
+logToHost(
+  `webview ready v${(window as unknown as { __promptStashVersion?: string }).__promptStashVersion ?? "?"} — drag claim installed`
 );
 
 listEl.replaceChildren(Skeleton(3));

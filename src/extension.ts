@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { PromptStashProvider } from "./providers/prompt-stash.provider";
 import { deriveTitle, readStore, sortedStashes, upsertStash } from "./storage/stash.storage";
 import { copyStash } from "./handlers/copy-stash.handler";
+import { disposeLogChannel, getLogChannel, log } from "./utils/log.utils";
 import type { Stash } from "./types/stash.types";
 
 function newStash(text: string): Stash {
@@ -52,6 +53,8 @@ async function copyLatest(): Promise<void> {
 
 export function activate(context: vscode.ExtensionContext): void {
   const provider = new PromptStashProvider(context);
+  log(`activated v${(context.extension.packageJSON as { version?: string }).version ?? "?"}`);
+  context.subscriptions.push(getLogChannel());
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(PromptStashProvider.viewId, provider, {
@@ -69,5 +72,6 @@ export function activate(context: vscode.ExtensionContext): void {
 }
 
 export function deactivate(): void {
-  // Nothing to tear down: state lives on disk, not in memory.
+  // State lives on disk, not in memory; only the log channel needs releasing.
+  disposeLogChannel();
 }

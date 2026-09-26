@@ -6,9 +6,10 @@ import { handleAddAttachment } from "./handlers/add-attachment.handler";
 import { handleDeleteAttachment } from "./handlers/delete-attachment.handler";
 import { handleCopyStash } from "./handlers/copy-stash.handler";
 import { handleOpenStore, handleRevealAttachment } from "./handlers/reveal-attachment.handler";
+import { handleLog } from "./handlers/log.handler";
 import type {
   AddAttachmentPayload, CopyStashPayload, DeleteAttachmentPayload, DeleteStashPayload,
-  ErrorPayload, RevealAttachmentPayload, SaveStashPayload, WebviewMessage,
+  ErrorPayload, LogPayload, RevealAttachmentPayload, SaveStashPayload, WebviewMessage,
 } from "./types/message.types";
 
 type MessageHandler = (webview: vscode.Webview, payload: unknown) => Promise<void>;
@@ -22,6 +23,7 @@ const handlers: Record<string, MessageHandler> = {
   COPY_STASH: (webview, payload) => handleCopyStash(webview, payload as CopyStashPayload),
   REVEAL_ATTACHMENT: (webview, payload) => handleRevealAttachment(webview, payload as RevealAttachmentPayload),
   OPEN_STORE: () => handleOpenStore(),
+  LOG: (_webview, payload) => handleLog(payload as LogPayload),
 };
 
 export function registerMessageRouter(webview: vscode.Webview): void {

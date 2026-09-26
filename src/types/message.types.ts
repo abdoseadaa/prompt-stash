@@ -10,6 +10,7 @@ export type MessageType =
   | "COPY_STASH"
   | "REVEAL_ATTACHMENT"
   | "OPEN_STORE"
+  | "LOG"
   // host -> webview
   | "STASHES"
   | "ATTACHMENT_ADDED"
@@ -104,6 +105,10 @@ export interface CopiedPayload {
   stashId: string;
   /** Shown in the webview so the user knows paste is ready. */
   message: string;
+}
+
+export interface LogPayload {
+  line: string;
 }
 
 export interface ErrorPayload {
