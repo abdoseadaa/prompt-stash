@@ -12,10 +12,15 @@ export function renderHeader(
   count: number,
   callbacks: HeaderCallbacks
 ): void {
+  // Shown so the running build is identifiable without opening developer tools
+  // and hunting for the right frame.
+  const version = (window as unknown as { __promptStashVersion?: string }).__promptStashVersion;
+
   const header = h("div", "pstash-header");
   mount(
     header,
     h("span", "pstash-header-title", "Stashes"),
+    version ? h("span", "pstash-version", `v${version}`) : null,
     count > 0 ? h("span", "pstash-count", String(count)) : null,
     IconButton({
       iconSvg: Icons.folder,

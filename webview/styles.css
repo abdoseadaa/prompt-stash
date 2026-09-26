@@ -31,7 +31,6 @@ body {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--pstash-fg-dim);
-  margin-right: auto;
 }
 
 .pstash-count {
@@ -495,4 +494,11 @@ kbd {
 @keyframes pstash-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+.pstash-version {
+  font-size: 10px;
+  color: var(--pstash-fg-faint);
+  font-variant-numeric: tabular-nums;
+  margin-right: auto;
 }
