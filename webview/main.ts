@@ -349,5 +349,12 @@ function claimFileDrags(): void {
 }
 
 claimFileDrags();
+
+// Printed so "which build is this window actually running, and did the drag
+// claim install?" is answerable at a glance in the webview's own console.
+console.log(
+  `[prompt-stash] v${(window as unknown as { __promptStashVersion?: string }).__promptStashVersion ?? "?"} ready — file drags claimed`
+);
+
 listEl.replaceChildren(Skeleton(3));
 post("LOAD_STASHES");

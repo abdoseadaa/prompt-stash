@@ -44,6 +44,7 @@ export class PromptStashProvider implements vscode.WebviewViewProvider {
     const tokensUri = webview.asWebviewUri(vscode.Uri.joinPath(webviewDir, "tokens.css"));
     const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(webviewDir, "styles.css"));
     const nonce = this.getNonce();
+    const version = (this.context.extension.packageJSON as { version?: string }).version ?? "unknown";
 
     // img-src carries the attachment thumbnails; connect-src lets the clipboard
     // bridge fetch() an attachment back as a Blob for navigator.clipboard.write.
@@ -71,6 +72,7 @@ export class PromptStashProvider implements vscode.WebviewViewProvider {
   <div id="error"></div>
   <div id="list"></div>
   <div id="lightbox"></div>
+  <script nonce="${nonce}">window.__promptStashVersion = "${version}";</script>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`;
