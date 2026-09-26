@@ -1,8 +1,8 @@
 {
   "name": "prompt-stash-panel",
-  "displayName": "Prompt Stash",
+  "displayName": "Prompt Stash Panel",
   "description": "Park an in-progress AI prompt — text plus screenshots and files — then copy it back into any chat box with one click.",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "publisher": "abdoseadaa",
   "author": {
     "name": "Abdelrahman Seada",
