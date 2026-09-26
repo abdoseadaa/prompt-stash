@@ -306,20 +306,36 @@ window.addEventListener("message", (event: MessageEvent<WebviewMessage>) => {
 });
 
 /**
- * A file dropped anywhere other than an open stash would otherwise make the
- * webview navigate to it, replacing the panel with the file's contents. These
- * run after the card's own handlers, which have already claimed the drops that
- * matter.
+ * Claims file drags for this panel, and must run for the whole document rather
+ * than just the drop target.
+ *
+ * VS Code's webview host does this (pre/index.html, handleInnerDragStartEvent):
+ *
+ *     window.addEventListener('dragenter', e => {
+ *       if (e.defaultPrevented) return;            // extension wants it
+ *       if (every item is kind === 'file')
+ *         hostMessaging.postMessage('drag-start')  // workbench takes the drag
+ *     })
+ *
+ * Once the workbench takes it, the iframe stops receiving the drag entirely, so
+ * a dragenter handler bound only to the card is far too late — the first
+ * dragenter lands on <body> as the cursor crosses into the panel, and the drag
+ * is gone before it reaches any card. Calling preventDefault here is the
+ * documented way to keep it.
+ *
+ * Handling drop as well means a file let go outside a stash is swallowed rather
+ * than navigating the webview to it, which would replace the panel.
  */
-function blockStrayFileDrops(): void {
-  const swallow = (event: DragEvent): void => {
+function claimFileDrags(): void {
+  const claim = (event: DragEvent): void => {
     if (!Array.from(event.dataTransfer?.types ?? []).includes("Files")) return;
     event.preventDefault();
   };
-  document.addEventListener("dragover", swallow);
-  document.addEventListener("drop", swallow);
+  document.addEventListener("dragenter", claim);
+  document.addEventListener("dragover", claim);
+  document.addEventListener("drop", claim);
 }
 
-blockStrayFileDrops();
+claimFileDrags();
 listEl.replaceChildren(Skeleton(3));
 post("LOAD_STASHES");

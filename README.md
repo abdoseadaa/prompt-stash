@@ -71,7 +71,7 @@ Click the 🔖 in the activity bar, or hit <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd
 | 🆕 Start a draft | **New**, top right of the panel |
 | 🆘 Rescue a prompt I already typed | Select it, <kbd>Ctrl</kbd>+<kbd>C</kbd>, then <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> — stashed without opening a thing |
 | 🖼️ Attach a screenshot | Paste it straight into the draft |
-| 📥 Attach any file | Drag it onto the open card from your file manager or the editor's explorer |
+| 📥 Attach any file | Drag it from your file manager onto the open card |
 | 🔍 Inspect an attachment | Hover its thumbnail and click |
 | 📋 Use the draft | **Copy**, then paste into any chat box |
 | 📂 Find the files on disk | The 📁 icon in the header |
@@ -145,6 +145,7 @@ Non-PNG images convert automatically, and if the system refuses the write, the f
 - 🗑️ **Deleting a stash deletes its attachments**, so the folder never fills with files nothing points at.
 - 🔁 **Changing `storePath` needs a window reload** before attachments display again.
 - 📐 **Text and images can't share one paste** — a clipboard limitation, explained above.
+- 🖱️ **Drag files in from your file manager**, not from the editor's own explorer — VS Code claims drags that start inside its own window before any panel can see them.
 
 ## 🔒 Privacy
 
